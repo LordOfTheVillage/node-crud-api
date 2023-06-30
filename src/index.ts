@@ -21,7 +21,6 @@ const server = createServer((req, res) => {
   res.setHeader('Content-Type', 'application/json');
   const index = Endpoints.USERS.split(EndpointsSeparator).length;
   const userId = url.split(EndpointsSeparator)[index];
-  console.log(userId);
 
   switch (method) {
     case Methods.GET:
