@@ -1,8 +1,8 @@
 import request from 'supertest';
 import { server } from '../index';
 
-describe('API tests', () => {
-  let createdUserId: string; // To store the ID of the created user for later use
+describe('API tests 01', () => {
+  let createdUserId: string;
 
   test('GET api/users should return an empty array', async () => {
     const response = await request(server).get('/api/users');
@@ -20,7 +20,7 @@ describe('API tests', () => {
     const response = await request(server).post('/api/users').send(newUser);
     expect(response.status).toBe(201);
     expect(response.body).toHaveProperty('id');
-    createdUserId = response.body.id; // Store the created user ID for later use
+    createdUserId = response.body.id;
   });
 
   test('GET api/users/{userId} should get the created user', async () => {
@@ -41,8 +41,8 @@ describe('API tests', () => {
       .send(updatedUser);
     expect(response.status).toBe(200);
     expect(response.body.id).toBe(createdUserId);
-    expect(response.body.age).toBe(35);
-    expect(response.body.hobbies).toEqual(['Reading', 'Gaming', 'Coding']);
+    expect(response.body.age).toBe(updatedUser.age);
+    expect(response.body.hobbies).toEqual(updatedUser.hobbies);
   });
 
   test('DELETE api/users/{userId} should delete the created user', async () => {
