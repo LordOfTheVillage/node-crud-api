@@ -32,3 +32,20 @@ export const checkUserData = (
     !Array.isArray(hobbies)
   );
 };
+
+export const checkUrl = (url: string, template: string) => {
+  let workUrl = url;
+  if (workUrl[workUrl.length - 1] === '/') {
+    workUrl = workUrl.slice(0, workUrl.length - 1);
+  }
+  const urlParts = workUrl.split('/');
+  const templateParts = template.split('/');
+
+  for (let i = 0; i < templateParts.length; i++) {
+    if (urlParts[i] !== templateParts[i]) {
+      return false;
+    }
+  }
+
+  return true;
+};

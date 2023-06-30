@@ -4,4 +4,5 @@ export const ErrorMessages = {
   USER_NOT_FOUND: 'User not found.',
   INVALID_USER_ID: 'Invalid user ID.',
   INVALID_URL: 'Invalid URL.',
+  INVALID_METHOD: 'Invalid method.',
 };

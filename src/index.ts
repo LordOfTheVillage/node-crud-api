@@ -5,21 +5,22 @@ import { PUT } from './modules/PUT';
 import { DELETE } from './modules/DELETE';
 import { Methods } from './constants/methods';
 import { Endpoints, EndpointsSeparator } from './constants/endpoints';
-import { createErrorResponse } from './utils/utils';
+import { checkUrl, createErrorResponse } from './utils/utils';
 import { StatusCode } from './constants/statusCode';
 import { ErrorMessages } from './constants/errorMessages';
 
 const server = createServer((req, res) => {
   const { method, url } = req;
 
-  if (!url || !url.startsWith(Endpoints.USERS)) {
-    createErrorResponse(res, StatusCode.BAD_REQUEST, ErrorMessages.INVALID_URL);
+  if (!url || !checkUrl(url, Endpoints.USERS)) {
+    createErrorResponse(res, StatusCode.NOT_FOUND, ErrorMessages.INVALID_URL);
     return;
   }
 
   res.setHeader('Content-Type', 'application/json');
   const index = Endpoints.USERS.split(EndpointsSeparator).length;
   const userId = url.split(EndpointsSeparator)[index];
+  console.log(userId);
 
   switch (method) {
     case Methods.GET:
@@ -44,8 +45,8 @@ const server = createServer((req, res) => {
     default:
       createErrorResponse(
         res,
-        StatusCode.BAD_REQUEST,
-        ErrorMessages.INVALID_URL,
+        StatusCode.NOT_FOUND,
+        ErrorMessages.INVALID_METHOD,
       );
   }
 });
