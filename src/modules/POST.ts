@@ -1,32 +1,44 @@
-import { v4 as uuidv4 } from 'uuid';
-import { users } from '../../server/database';
+import { addUser } from '../../server/database';
 import { IncomingMessage, ServerResponse } from 'http';
+import { createErrorResponse, createSuccessResponse } from '../utils/utils';
+import { StatusCode } from '../constants/statusCode';
+import { ErrorMessages } from '../constants/errorMessages';
 
-export const POST = (req: IncomingMessage, res: ServerResponse) => {
-  let body = '';
-  req.on('data', (chunk) => {
-    body += chunk.toString();
-  });
+type POST = (req: IncomingMessage, res: ServerResponse) => void;
+export const POST: POST = (req, res) => {
+  try {
+    let body = '';
+    req.on('data', (chunk) => {
+      body += chunk.toString();
+    });
 
-  req.on('end', () => {
-    const { username, age, hobbies } = JSON.parse(body);
+    req.on('end', () => {
+      const { username, age, hobbies } = JSON.parse(body);
 
-    if (!username || !age) {
-      res.statusCode = 400;
-      res.end(JSON.stringify({ error: 'Username and age are required.' }));
-      return;
-    }
+      if (
+        !username ||
+        !age ||
+        !hobbies ||
+        typeof username !== 'string' ||
+        typeof age !== 'number' ||
+        !Array.isArray(hobbies)
+      ) {
+        createErrorResponse(
+          res,
+          StatusCode.BAD_REQUEST,
+          ErrorMessages.USERNAME_AGE_HOBBIES_REQUIRED,
+        );
+        return;
+      }
 
-    const newUser = {
-      id: uuidv4(),
-      username,
-      age,
-      hobbies: hobbies || [],
-    };
-
-    users.push(newUser);
-
-    res.statusCode = 201;
-    res.end(JSON.stringify(newUser));
-  });
+      const newUser = addUser(username, age, hobbies);
+      createSuccessResponse(res, StatusCode.CREATED, newUser);
+    });
+  } catch (error) {
+    createErrorResponse(
+      res,
+      StatusCode.INTERNAL_SERVER_ERROR,
+      (error as Error).message,
+    );
+  }
 };

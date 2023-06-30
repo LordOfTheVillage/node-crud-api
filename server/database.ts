@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 
-export let users = [
+export const users = [
   {
     id: uuidv4(),
     username: 'John Doe',
@@ -14,3 +14,15 @@ export let users = [
     hobbies: ['Cooking', 'Hiking'],
   },
 ];
+
+export const addUser = (username: string, age: number, hobbies: string[]) => {
+  const newUser = {
+    id: uuidv4(),
+    username,
+    age,
+    hobbies: hobbies,
+  };
+
+  users.push(newUser);
+  return newUser;
+};

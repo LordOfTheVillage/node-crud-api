@@ -1,5 +1,4 @@
 import { ServerResponse } from 'http';
-import { StatusCode } from '../constants/statusCode';
 
 export const createErrorResponse = (
   res: ServerResponse,
@@ -10,7 +9,11 @@ export const createErrorResponse = (
   res.end(JSON.stringify({ statusCode, message }));
 };
 
-export const createSuccessResponse = (res: ServerResponse, data: unknown) => {
-  res.statusCode = StatusCode.OK;
+export const createSuccessResponse = (
+  res: ServerResponse,
+  statusCode: number,
+  data: unknown,
+) => {
+  res.statusCode = statusCode;
   res.end(JSON.stringify(data));
 };

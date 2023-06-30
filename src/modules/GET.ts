@@ -15,7 +15,7 @@ type GET = (
 export const GET: GET = (req, res, userId = null) => {
   try {
     if (!userId) {
-      createSuccessResponse(res, users);
+      createSuccessResponse(res, StatusCode.OK, users);
       return;
     }
 
@@ -39,7 +39,7 @@ export const GET: GET = (req, res, userId = null) => {
       return;
     }
 
-    createSuccessResponse(res, user);
+    createSuccessResponse(res, StatusCode.OK, user);
   } catch (error) {
     createErrorResponse(
       res,
