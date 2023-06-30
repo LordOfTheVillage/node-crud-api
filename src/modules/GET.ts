@@ -3,7 +3,7 @@ import { validate as validateUUID } from 'uuid';
 import { createErrorResponse, createSuccessResponse } from '../utils/utils';
 import { StatusCode } from '../constants/statusCode';
 import { ErrorMessages } from '../constants/errorMessages';
-import { users } from '../../server/database';
+import { users } from '../../server/data';
 
 type GET = (
   req: IncomingMessage,

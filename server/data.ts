@@ -26,3 +26,22 @@ export const addUser = (username: string, age: number, hobbies: string[]) => {
   users.push(newUser);
   return newUser;
 };
+
+export const updateUser = (
+  userId: string,
+  username: string,
+  age: number,
+  hobbies: string[],
+) => {
+  const userToUpdate = users.find((user) => user.id === userId);
+
+  if (!userToUpdate) {
+    return null;
+  }
+
+  userToUpdate.username = username || userToUpdate.username;
+  userToUpdate.age = age || userToUpdate.age;
+  userToUpdate.hobbies = hobbies || userToUpdate.hobbies;
+
+  return userToUpdate;
+};

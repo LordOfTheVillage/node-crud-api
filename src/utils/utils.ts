@@ -17,3 +17,18 @@ export const createSuccessResponse = (
   res.statusCode = statusCode;
   res.end(JSON.stringify(data));
 };
+
+export const checkUserData = (
+  username: unknown,
+  age: unknown,
+  hobbies: unknown,
+) => {
+  return (
+    !username ||
+    !age ||
+    !hobbies ||
+    typeof username !== 'string' ||
+    typeof age !== 'number' ||
+    !Array.isArray(hobbies)
+  );
+};

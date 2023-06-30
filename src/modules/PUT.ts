@@ -1,4 +1,3 @@
-import { addUser } from '../../server/data';
 import { IncomingMessage, ServerResponse } from 'http';
 import {
   checkUserData,
@@ -7,10 +6,24 @@ import {
 } from '../utils/utils';
 import { StatusCode } from '../constants/statusCode';
 import { ErrorMessages } from '../constants/errorMessages';
+import { updateUser } from '../../server/data';
 
-type POST = (req: IncomingMessage, res: ServerResponse) => void;
-export const POST: POST = (req, res) => {
+type PUT = (
+  req: IncomingMessage,
+  res: ServerResponse,
+  userId: string | null,
+) => void;
+
+export const PUT: PUT = (req, res, userId = null) => {
   try {
+    if (!userId) {
+      createErrorResponse(
+        res,
+        StatusCode.BAD_REQUEST,
+        ErrorMessages.INVALID_URL,
+      );
+      return;
+    }
     let body = '';
     req.on('data', (chunk) => {
       body += chunk.toString();
@@ -28,8 +41,18 @@ export const POST: POST = (req, res) => {
         return;
       }
 
-      const newUser = addUser(username, age, hobbies);
-      createSuccessResponse(res, StatusCode.CREATED, newUser);
+      const userToUpdate = updateUser(userId, username, age, hobbies);
+
+      if (!userToUpdate) {
+        createErrorResponse(
+          res,
+          StatusCode.NOT_FOUND,
+          ErrorMessages.USER_NOT_FOUND,
+        );
+        return;
+      }
+
+      createSuccessResponse(res, StatusCode.OK, userToUpdate);
     });
   } catch (error) {
     createErrorResponse(
