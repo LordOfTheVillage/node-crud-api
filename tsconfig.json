@@ -4,7 +4,10 @@
         "forceConsistentCasingInFileNames": true,
         "allowSyntheticDefaultImports": true,
         "esModuleInterop": true,
-        "lib": ["ESNext"],
+        "lib": [
+            "ESNext",
+            "dom"
+        ],
         "module": "CommonJS",
         "moduleResolution": "Node",
         "noUncheckedIndexedAccess": true,
