@@ -8,6 +8,7 @@ import { Endpoints, EndpointsSeparator } from './constants/endpoints';
 import { checkUrl, createErrorResponse } from './utils/utils';
 import { StatusCode } from './constants/statusCode';
 import { ErrorMessages } from './constants/errorMessages';
+import 'dotenv/config';
 
 const server = createServer((req, res) => {
   const { method, url } = req;
@@ -51,7 +52,7 @@ const server = createServer((req, res) => {
   }
 });
 
-const port = 3000;
+const port = process.env.PORT || 5000;
 server.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
 });
