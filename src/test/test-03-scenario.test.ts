@@ -1,17 +1,20 @@
 import request from 'supertest';
 import { server } from '../index';
 import { v4 as uuidv4 } from 'uuid';
+import { ErrorMessages } from '../constants/errorMessages';
+import { StatusCode } from '../constants/statusCode';
+import { Endpoints } from '../constants/endpoints';
 
 describe('API Tests 03', () => {
   test('should get a user by ID', async () => {
     const user = { username: 'Alice', age: 25, hobbies: ['Reading'] };
     const createUserResponse = await request(server)
-      .post('/api/users')
+      .post(Endpoints.USERS)
       .send(user);
 
     const userId = createUserResponse.body.id;
 
-    const response = await request(server).get(`/api/users/${userId}`);
+    const response = await request(server).get(`${Endpoints.USERS}/${userId}`);
     expect(response.status).toBe(200);
 
     const returnedUser = response.body;
@@ -22,23 +25,23 @@ describe('API Tests 03', () => {
   });
 
   test('should return 400 for invalid user ID', async () => {
-    const response = await request(server).get('/api/users/invalid-id');
-    expect(response.status).toBe(400);
+    const response = await request(server).get(`${Endpoints.USERS}/invalid-id`);
+    expect(response.status).toBe(StatusCode.BAD_REQUEST);
     expect(response.body).toEqual({
-      message: 'Invalid user ID.',
-      statusCode: 400,
+      message: ErrorMessages.INVALID_USER_ID,
+      statusCode: StatusCode.BAD_REQUEST,
     });
   });
 
   test('should return 404 for non-existent user ID', async () => {
     const nonExistentUserId = uuidv4();
     const response = await request(server).get(
-      `/api/users/${nonExistentUserId}`,
+      `${Endpoints.USERS}/${nonExistentUserId}`,
     );
-    expect(response.status).toBe(404);
+    expect(response.status).toBe(StatusCode.NOT_FOUND);
     expect(response.body).toEqual({
-      message: 'User not found.',
-      statusCode: 404,
+      message: ErrorMessages.USER_NOT_FOUND,
+      statusCode: StatusCode.NOT_FOUND,
     });
   });
 });

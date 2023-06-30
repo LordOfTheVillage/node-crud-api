@@ -1,12 +1,14 @@
 import request from 'supertest';
 import { server } from '../index';
+import { Endpoints } from '../constants/endpoints';
+import { StatusCode } from '../constants/statusCode';
 
 describe('API tests 01', () => {
   let createdUserId: string;
 
   test('GET api/users should return an empty array', async () => {
-    const response = await request(server).get('/api/users');
-    expect(response.status).toBe(200);
+    const response = await request(server).get(Endpoints.USERS);
+    expect(response.status).toBe(StatusCode.OK);
     expect(response.body).toEqual([]);
   });
 
@@ -17,15 +19,17 @@ describe('API tests 01', () => {
       hobbies: ['Reading', 'Gaming'],
     };
 
-    const response = await request(server).post('/api/users').send(newUser);
-    expect(response.status).toBe(201);
+    const response = await request(server).post(Endpoints.USERS).send(newUser);
+    expect(response.status).toBe(StatusCode.CREATED);
     expect(response.body).toHaveProperty('id');
     createdUserId = response.body.id;
   });
 
   test('GET api/users/{userId} should get the created user', async () => {
-    const response = await request(server).get(`/api/users/${createdUserId}`);
-    expect(response.status).toBe(200);
+    const response = await request(server).get(
+      `${Endpoints.USERS}/${createdUserId}`,
+    );
+    expect(response.status).toBe(StatusCode.OK);
     expect(response.body.id).toBe(createdUserId);
   });
 
@@ -37,9 +41,9 @@ describe('API tests 01', () => {
     };
 
     const response = await request(server)
-      .put(`/api/users/${createdUserId}`)
+      .put(`${Endpoints.USERS}/${createdUserId}`)
       .send(updatedUser);
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(StatusCode.OK);
     expect(response.body.id).toBe(createdUserId);
     expect(response.body.age).toBe(updatedUser.age);
     expect(response.body.hobbies).toEqual(updatedUser.hobbies);
@@ -47,14 +51,16 @@ describe('API tests 01', () => {
 
   test('DELETE api/users/{userId} should delete the created user', async () => {
     const response = await request(server).delete(
-      `/api/users/${createdUserId}`,
+      `${Endpoints.USERS}/${createdUserId}`,
     );
-    expect(response.status).toBe(204);
+    expect(response.status).toBe(StatusCode.NO_CONTENT);
   });
 
   test('GET api/users/{userId} should return 404 for the deleted user', async () => {
-    const response = await request(server).get(`/api/users/${createdUserId}`);
-    expect(response.status).toBe(404);
+    const response = await request(server).get(
+      `${Endpoints.USERS}/${createdUserId}`,
+    );
+    expect(response.status).toBe(StatusCode.NOT_FOUND);
     expect(response.body).toHaveProperty('message');
   });
 });

@@ -1,6 +1,9 @@
 import { server } from '../index';
 import request from 'supertest';
 import { User } from '../../server/data';
+import { Endpoints } from '../constants/endpoints';
+import { ErrorMessages } from '../constants/errorMessages';
+import { StatusCode } from '../constants/statusCode';
 
 describe('API Tests 02', () => {
   let userId: string = '';
@@ -13,12 +16,12 @@ describe('API Tests 02', () => {
     ];
 
     const createPromises = users.map((user) =>
-      request(server).post('/api/users').send(user),
+      request(server).post(Endpoints.USERS).send(user),
     );
     await Promise.all(createPromises);
 
-    const response = await request(server).get('/api/users');
-    expect(response.status).toBe(200);
+    const response = await request(server).get(Endpoints.USERS);
+    expect(response.status).toBe(StatusCode.OK);
     expect(response.body.length).toBe(users.length);
 
     for (let i = 0; i < users.length; i++) {
@@ -33,23 +36,25 @@ describe('API Tests 02', () => {
   test('should delete a user', async () => {
     const user = { username: 'Alice', age: 25, hobbies: ['Reading'] };
     const createUserResponse = await request(server)
-      .post('/api/users')
+      .post(Endpoints.USERS)
       .send(user);
 
     userId = createUserResponse.body.id;
 
-    const deleteResponse = await request(server).delete(`/api/users/${userId}`);
-    expect(deleteResponse.status).toBe(204);
+    const deleteResponse = await request(server).delete(
+      `${Endpoints.USERS}/${userId}`,
+    );
+    expect(deleteResponse.status).toBe(StatusCode.NO_CONTENT);
   });
 
   test('should try delete an invalid user', async () => {
     const deleteAgainResponse = await request(server).delete(
-      `/api/users/${userId}`,
+      `${Endpoints.USERS}/${userId}`,
     );
-    expect(deleteAgainResponse.status).toBe(404);
+    expect(deleteAgainResponse.status).toBe(StatusCode.NOT_FOUND);
     expect(deleteAgainResponse.body).toEqual({
-      message: 'User not found.',
-      statusCode: 404,
+      message: ErrorMessages.USER_NOT_FOUND,
+      statusCode: StatusCode.NOT_FOUND,
     });
   });
 
@@ -60,13 +65,13 @@ describe('API Tests 02', () => {
       hobbies: ['Coding'],
     };
     const updateResponse = await request(server)
-      .put(`/api/users/${userId}`)
+      .put(`${Endpoints.USERS}/${userId}`)
       .send(updatedUser);
 
-    expect(updateResponse.status).toBe(404);
+    expect(updateResponse.status).toBe(StatusCode.NOT_FOUND);
     expect(updateResponse.body).toEqual({
-      message: 'User not found.',
-      statusCode: 404,
+      message: ErrorMessages.USER_NOT_FOUND,
+      statusCode: StatusCode.NOT_FOUND,
     });
   });
 });
