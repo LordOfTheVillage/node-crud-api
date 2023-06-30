@@ -1,5 +1,6 @@
 import { createServer } from 'http';
-import { users } from '../server/database';
+import { POST } from './modules/POST';
+import { GET } from './modules/GET';
 
 const server = createServer((req, res) => {
   const { method, url } = req;
@@ -7,11 +8,13 @@ const server = createServer((req, res) => {
   res.setHeader('Content-Type', 'application/json');
 
   if (method === 'GET' && url === '/api/users') {
-    res.statusCode = 200;
-    res.end(JSON.stringify(users));
+    GET(req, res);
+  }
+
+  if (method === 'POST' && url === '/api/users') {
+    POST(req, res);
   }
 });
-
 
 const port = 3000;
 server.listen(port, () => {
