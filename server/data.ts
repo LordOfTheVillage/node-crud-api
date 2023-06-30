@@ -45,3 +45,14 @@ export const updateUser = (
 
   return userToUpdate;
 };
+
+export const deleteUser = (userId: string) => {
+  const userToDelete = users.find((user) => user.id === userId);
+
+  if (!userToDelete) {
+    return null;
+  }
+
+  users.splice(users.indexOf(userToDelete), 1);
+  return userToDelete;
+};

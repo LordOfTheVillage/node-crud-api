@@ -7,23 +7,25 @@ import {
 import { StatusCode } from '../constants/statusCode';
 import { ErrorMessages } from '../constants/errorMessages';
 import { updateUser } from '../../server/data';
+import { validate as validateUUID } from 'uuid';
 
 type PUT = (
   req: IncomingMessage,
   res: ServerResponse,
-  userId: string | null,
+  userId?: string | null,
 ) => void;
 
 export const PUT: PUT = (req, res, userId = null) => {
   try {
-    if (!userId) {
+    if (!userId || !validateUUID(userId)) {
       createErrorResponse(
         res,
         StatusCode.BAD_REQUEST,
-        ErrorMessages.INVALID_URL,
+        ErrorMessages.INVALID_USER_ID,
       );
       return;
     }
+
     let body = '';
     req.on('data', (chunk) => {
       body += chunk.toString();
