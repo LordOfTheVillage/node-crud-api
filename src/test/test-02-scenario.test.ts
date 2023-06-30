@@ -1,11 +1,13 @@
+process.env.PORT = '3002';
 import { server } from '../index';
-import request from 'supertest';
 import { User } from '../../server/data';
 import { Endpoints } from '../constants/endpoints';
 import { ErrorMessages } from '../constants/errorMessages';
 import { StatusCode } from '../constants/statusCode';
+import supertest from 'supertest';
 
 describe('API Tests 02', () => {
+  const request = supertest(server);
   let userId: string = '';
 
   test('should create and get list of users', async () => {
@@ -16,11 +18,11 @@ describe('API Tests 02', () => {
     ];
 
     const createPromises = users.map((user) =>
-      request(server).post(Endpoints.USERS).send(user),
+      request.post(Endpoints.USERS).send(user),
     );
     await Promise.all(createPromises);
 
-    const response = await request(server).get(Endpoints.USERS);
+    const response = await request.get(Endpoints.USERS);
     expect(response.status).toBe(StatusCode.OK);
     expect(response.body.length).toBe(users.length);
 
@@ -35,20 +37,16 @@ describe('API Tests 02', () => {
 
   test('should delete a user', async () => {
     const user = { username: 'Alice', age: 25, hobbies: ['Reading'] };
-    const createUserResponse = await request(server)
-      .post(Endpoints.USERS)
-      .send(user);
+    const createUserResponse = await request.post(Endpoints.USERS).send(user);
 
     userId = createUserResponse.body.id;
 
-    const deleteResponse = await request(server).delete(
-      `${Endpoints.USERS}/${userId}`,
-    );
+    const deleteResponse = await request.delete(`${Endpoints.USERS}/${userId}`);
     expect(deleteResponse.status).toBe(StatusCode.NO_CONTENT);
   });
 
   test('should try delete an invalid user', async () => {
-    const deleteAgainResponse = await request(server).delete(
+    const deleteAgainResponse = await request.delete(
       `${Endpoints.USERS}/${userId}`,
     );
     expect(deleteAgainResponse.status).toBe(StatusCode.NOT_FOUND);
@@ -64,7 +62,7 @@ describe('API Tests 02', () => {
       age: 35,
       hobbies: ['Coding'],
     };
-    const updateResponse = await request(server)
+    const updateResponse = await request
       .put(`${Endpoints.USERS}/${userId}`)
       .send(updatedUser);
 
