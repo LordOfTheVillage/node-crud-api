@@ -10,7 +10,7 @@ import { StatusCode } from './constants/statusCode';
 import { ErrorMessages } from './constants/errorMessages';
 import 'dotenv/config';
 
-const server = createServer((req, res) => {
+export const server = createServer((req, res) => {
   const { method, url } = req;
 
   if (!url || !checkUrl(url, Endpoints.USERS)) {
