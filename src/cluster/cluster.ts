@@ -23,7 +23,7 @@ for (let i = 0; i < numWorkers; i++) {
 
 const loadBalancer = createServer((req, res) => {
   const nextWorker = workers.shift();
-  workers.push(nextWorker as any);
+  workers.push(nextWorker as Server);
 
   nextWorker?.emit('request', req, res);
 });
