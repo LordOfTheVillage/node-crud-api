@@ -6,9 +6,9 @@
     "node": ">=18.0.0"
   },
   "scripts": {
-    "test": "echo \\\"Error: no src/test specified\\\" && exit 1",
     "start:dev": "ts-node-dev src/index.ts",
     "start:prod": "npm run build && node dist/bundle.js",
+    "start:multi": "ts-node-dev src/cluster/cluster.ts",
     "build": "webpack",
     "test": "jest --silent"
   },
