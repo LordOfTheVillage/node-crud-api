@@ -1,5 +1,5 @@
 process.env.PORT = '3003';
-import { server } from '../index';
+import { server } from '../app';
 import { v4 as uuidv4 } from 'uuid';
 import { ErrorMessages } from '../constants/errorMessages';
 import { StatusCode } from '../constants/statusCode';

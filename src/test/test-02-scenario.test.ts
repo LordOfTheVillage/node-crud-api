@@ -1,5 +1,5 @@
 process.env.PORT = '3002';
-import { server } from '../index';
+import { server } from '../app';
 import { User } from '../../server/data';
 import { Endpoints } from '../constants/endpoints';
 import { ErrorMessages } from '../constants/errorMessages';
