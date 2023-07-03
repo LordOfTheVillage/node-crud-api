@@ -1,61 +1,106 @@
-# Assignment: CRUD API
+# CRUD API
+This is a Node.js project that implements a simple CRUD API using an in-memory database. The API allows you to perform basic CRUD operations on user records.
 
-## Description
+## Installation
+Clone the repository:
 
-Your task is to implement simple CRUD API using in-memory database underneath.
+~~~bash
+git clone <repository-url>
+~~~
+Navigate to the project directory:
 
-## Technical requirements
+~~~bash
+cd <project-directory>
+~~~
+Install the dependencies:
 
-- Task can be implemented on Javascript or Typescript
-- Only `nodemon`, `dotenv`, `cross-env`, `typescript`, `ts-node`, `ts-node-dev`, `eslint` and its plugins, `webpack-cli`, `webpack` and its plugins, `prettier`, `uuid`, `@types/*` as well as libraries used for testing are allowed
-- Use 18 LTS version of Node.js
-- Prefer asynchronous API whenever possible
+~~~bash
+npm install
+~~~
+Create a .env file in the root directory and specify the port on which the application should run:
 
-## Implementation details
+~~~makefile
+PORT=4000
+~~~
 
-1. Implemented endpoint `api/users`:
-    - **GET** `api/users` is used to get all persons
-        - Server should answer with `status code` **200** and all users records
-    - **GET** `api/users/{userId}`
-        - Server should answer with `status code` **200** and record with `id === userId` if it exists
-        - Server should answer with `status code` **400** and corresponding message if `userId` is invalid (not `uuid`)
-        - Server should answer with `status code` **404** and corresponding message if record with `id === userId` doesn't exist
-    - **POST** `api/users` is used to create record about new user and store it in database
-        - Server should answer with `status code` **201** and newly created record
-        - Server should answer with `status code` **400** and corresponding message if request `body` does not contain **required** fields
-    - **PUT** `api/users/{userId}` is used to update existing user
-        - Server should answer with` status code` **200** and updated record
-        - Server should answer with` status code` **400** and corresponding message if `userId` is invalid (not `uuid`)
-        - Server should answer with` status code` **404** and corresponding message if record with `id === userId` doesn't exist
-    - **DELETE** `api/users/{userId}` is used to delete existing user from database
-        - Server should answer with `status code` **204** if the record is found and deleted
-        - Server should answer with `status code` **400** and corresponding message if `userId` is invalid (not `uuid`)
-        - Server should answer with `status code` **404** and corresponding message if record with `id === userId` doesn't exist
-2. Users are stored as `objects` that have following properties:
-    - `id` — unique identifier (`string`, `uuid`) generated on server side
-    - `username` — user's name (`string`, **required**)
-    - `age` — user's age (`number`, **required**)
-    - `hobbies` — user's hobbies (`array` of `strings` or empty `array`, **required**)
-3. Requests to non-existing endpoints (e.g. `some-non/existing/resource`) should be handled (server should answer with `status code` **404** and corresponding human-friendly message)
-4. Errors on the server side that occur during the processing of a request should be handled and processed correctly (server should answer with `status code` **500** and corresponding human-friendly message)
-5. Value of `port` on which application is running should be stored in `.env` file
-6. There should be 2 modes of running application (**development** and **production**):
-    - The application is run in development mode using `nodemon` or `ts-node-dev` (there is a `npm` script `start:dev`)
-    - The application is run in production mode (there is a `npm` script `start:prod` that starts the build process and then runs the bundled file)
-7. There could be some tests for API (not less than **3** scenarios). Example of test scenario:
-    1. Get all records with a `GET` `api/users` request (an empty array is expected)
-    2. A new object is created by a `POST` `api/users` request (a response containing newly created record is expected)
-    3. With a `GET` `api/user/{userId}` request, we try to get the created  record by its `id` (the created record is expected)
-    4. We try to update the created record with a `PUT` `api/users/{userId}`request (a response is expected containing an updated object with the same `id`)
-    5. With a `DELETE` `api/users/{userId}` request, we delete the created object by `id` (confirmation of successful deletion is expected)
-    6. With a `GET` `api/users/{userId}` request, we are trying to get a deleted object by `id` (expected answer is that there is no such object)
-8. There could be implemented horizontal scaling for application, there should be `npm` script `start:multi` that starts multiple instances of your application using the Node.js `Cluster` API (equal to the number of available parallelism - 1 on the host machine, each listening on port PORT + n) with a **load balancer** that distributes requests across them (using Round-robin algorithm). For example: available parallelism is 4, `PORT` is 4000. On run `npm run start:multi` it works following way
-- On `localhost:4000/api` load balancer is listening for requests
-- On `localhost:4001/api`, `localhost:4002/api`, `localhost:4003/api` workers are listening for requests from load balancer
-- When user sends request to `localhost:4000/api`, load balancer sends this request to `localhost:4001/api`, next user request is sent to `localhost:4002/api` and so on.
-- After sending request to `localhost:4003/api` load balancer starts from the first worker again (sends request to `localhost:4001/api`)
-- State of db should be consistent between different workers, for example:
-    1. First `POST` request addressed to `localhost:4001/api` creates user
-    2. Second `GET` request addressed to `localhost:4002/api` should return created user
-    3. Third `DELETE` request addressed to `localhost:4003/api` deletes created user
-    4. Fourth `GET` request addressed to `localhost:4001/api` should return **404** status code for created user
+## Usage
+
+### Development Mode
+To run the application in development mode, use the following command:
+
+~~~bash
+npm run start:dev
+~~~
+This will start the application using ts-node-dev, which provides automatic restarts on file changes during development.
+
+### Production Mode
+To run the application in production mode, use the following command:
+
+~~~bash
+npm run start:prod
+~~~
+This will build the application using webpack and then run the bundled file using node.
+
+### Horizontal Scaling
+To run the application in multi-instance mode with horizontal scaling, use the following command:
+
+~~~bash
+npm run start:multi
+~~~
+This command will start multiple instances of the application using the Node.js. 
+The number of instances will be equal to the number of available parallelism minus one on the host machine. 
+Each instance will listen on a different port, starting from the specified PORT value and incrementing by one.
+
+The load balancer listens for requests on `localhost:<PORT>/api` and distributes them across the worker instances using a Round-robin algorithm. 
+Requests are evenly distributed among the workers to achieve load balancing.
+
+The state of the database is consistent between different workers, 
+ensuring that the data remains the same regardless of which worker processes the request.
+
+## API Endpoints
+The API provides the following endpoints for CRUD operations on user records:
+
+- `GET api/users`: Retrieve all user records.
+- `GET api/users/{userId}`: Retrieve a specific user record by ID.
+- `POST api/users`: Create a new user record.
+- `PUT api/users/{userId}`: Update an existing user record.
+- `DELETE api/users/{userId}`: Delete a user record.
+
+The expected responses and error handling for each endpoint are described below:
+
+### GET api/users
+- Returns: Status code 200 and an array of all user records.
+- Errors: Status code 404 if the endpoint is not found.
+### GET api/users/{userId}
+- Returns: Status code 200 and the user record with the specified ID if it exists.
+- Errors:
+  - Status code 400 if the userId parameter is invalid (not a valid UUID).
+  - Status code 404 if a user record with the specified ID doesn't exist.
+### POST api/users
+Creates a new user record.
+- Returns: Status code 201 and the newly created user record.
+- Errors:
+Status code 400 if the request body does not contain the required fields (username, age, hobbies).
+### PUT api/users/{userId}
+Updates an existing user record with the specified ID.
+- Returns: Status code 200 and the updated user record.
+- Errors:
+  - Status code 400 if the userId parameter is invalid (not a valid UUID).
+  - Status code 404 if a user record with the specified ID doesn't exist.
+### DELETE api/users/{userId}
+Deletes an existing user record with the specified ID.
+- Returns: Status code 204 if the user record is found and deleted.
+- Errors:
+  - Status code 400 if the userId parameter is invalid (not a valid UUID).
+  - Status code 404 if a user record with the specified ID doesn't exist.
+## Error Handling
+Requests to non-existing endpoints will return status code 404 and a corresponding human-friendly message.
+Server-side errors during request processing will return status code 500 and a corresponding human-friendly message.
+## Testing
+The project includes tests for the API. There are three scenarios.
+~~~bash
+npm run test
+~~~
+The tests use the Jest framework and will run silently, providing the test results.
+
+That's it! You're ready to use the CRUD API. Goodbye!
