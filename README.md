@@ -65,7 +65,8 @@ The API provides the following endpoints for CRUD operations on user records:
 - `POST api/users`: Create a new user record.
 - `PUT api/users/{userId}`: Update an existing user record.
 - `DELETE api/users/{userId}`: Delete a user record.
-- The expected responses and error handling for each endpoint are described below:
+
+The expected responses and error handling for each endpoint are described below:
 
 ### GET api/users
 - Returns: Status code 200 and an array of all user records.
